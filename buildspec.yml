@@ -1,0 +1,33 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      python: 3.11
+    commands:
+      - echo Installing Python dependencies...
+      - pip install -r requirements.txt
+
+  pre_build:
+    commands:
+      - echo Pre-build started
+      - chmod +x scripts/before_install.sh
+      - chmod +x scripts/after_install.sh
+      - chmod +x scripts/start_server.sh
+      - chmod +x scripts/stop_server.sh
+
+  build:
+    commands:
+      - echo Build started
+      - echo Validating app.py exists...
+      - python -c "import py_compile; py_compile.compile('app.py')"
+      - echo Python syntax check passed!
+
+  post_build:
+    commands:
+      - echo Build completed!
+
+artifacts:
+  files:
+    - '**/*'
+  discard-paths: no

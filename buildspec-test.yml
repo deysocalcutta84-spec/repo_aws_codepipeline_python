@@ -1,0 +1,46 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      python: 3.11
+    commands:
+      - pip install flask
+
+  build:
+    commands:
+      - echo '=============================='
+      - echo 'Starting Automated Tests...'
+      - echo '=============================='
+
+      # Test 1 - Check app.py exists
+      - echo 'TEST 1 - Checking app.py exists...'
+      - test -f app.py && echo 'PASS' || (echo 'FAIL - app.py missing!' && exit 1)
+
+      # Test 2 - Check requirements.txt exists
+      - echo 'TEST 2 - Checking requirements.txt exists...'
+      - test -f requirements.txt && echo 'PASS' || (echo 'FAIL - requirements.txt missing!' && exit 1)
+
+      # Test 3 - Check Python syntax is valid
+      - echo 'TEST 3 - Checking Python syntax...'
+      - python -c "import py_compile; py_compile.compile('app.py')" && echo 'PASS' || (echo 'FAIL - Python syntax error!' && exit 1)
+
+      # Test 4 - Check Flask is imported
+      - echo 'TEST 4 - Checking Flask import in app.py...'
+      - grep -q 'from flask import' app.py && echo 'PASS' || (echo 'FAIL - Flask import missing!' && exit 1)
+
+      # Test 5 - Check app route exists
+      - echo 'TEST 5 - Checking home route exists...'
+      - grep -q '@app.route' app.py && echo 'PASS' || (echo 'FAIL - No routes found!' && exit 1)
+
+      # Test 6 - Check appspec.yml exists
+      - echo 'TEST 6 - Checking appspec.yml exists...'
+      - test -f appspec.yml && echo 'PASS' || (echo 'FAIL - appspec.yml missing!' && exit 1)
+
+      # Test 7 - Check deployment scripts exist
+      - echo 'TEST 7 - Checking deployment scripts...'
+      - test -f scripts/start_server.sh && echo 'PASS' || (echo 'FAIL - start_server.sh missing!' && exit 1)
+
+      - echo '=============================='
+      - echo 'ALL TESTS PASSED! Safe to deploy.'
+      - echo '=============================='
